@@ -1,3 +1,4 @@
+// scheduler.ts
 import axios from 'axios';
 import { MessageModel } from '../models/Message.js';
 import { TokenModel } from '../models/Token.js';
@@ -13,6 +14,7 @@ export const sendScheduledMessages = async () => {
   if (messages.length === 0) return;
 
   for (const msg of messages) {
+    console.log('🔍 Looking up token for:', msg.team_id); // Add this
     const tokenDoc = await TokenModel.findOne({ 'team.id': msg.team_id });
 
     if (!tokenDoc) {
