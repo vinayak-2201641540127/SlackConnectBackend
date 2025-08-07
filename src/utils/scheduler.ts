@@ -12,13 +12,14 @@ export const sendScheduledMessages = async () => {
 
   if (messages.length === 0) return;
 
-  const tokenDoc = await TokenModel.findOne({});
-  if (!tokenDoc) {
-    console.error('❌ Slack token not found.');
-    return;
-  }
-
   for (const msg of messages) {
+    const tokenDoc = await TokenModel.findOne({ 'team.id': msg.team_id });
+
+    if (!tokenDoc) {
+      console.error(`❌ Slack token not found for team: ${msg.team_id}`);
+      continue;
+    }
+
     try {
       const res = await axios.post('https://slack.com/api/chat.postMessage', {
         channel: msg.channel,
