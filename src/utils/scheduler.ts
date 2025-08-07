@@ -5,15 +5,16 @@ import { TokenModel } from '../models/Token.js';
 
 export const sendScheduledMessages = async () => {
   const now = new Date();
-  console.log("Hii", now);
+  // console.log("Hii", now);
   const messages = await MessageModel.find({
     status: 'scheduled',
     send_at: { $lte: now }
   });
-
+  console.log(messages);
   if (messages.length === 0) return;
 
   for (const msg of messages) {
+    console.log(msg);
     console.log('🔍 Looking up token for:', msg.team_id); // Add this
     const tokenDoc = await TokenModel.findOne({ 'team.id': msg.team_id });
 
