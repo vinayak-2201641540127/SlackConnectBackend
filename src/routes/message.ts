@@ -69,16 +69,20 @@ router.post('/send', async (req, res) => {
 //   }
 // });
 
+
 import dayjs from 'dayjs';
 
 router.post('/schedule', async (req, res) => {
-  const { channel, message, sendAt } = req.body;
+  const { channel, message, sendAt, team_id } = req.body;
 
-  if (!channel || !message || !sendAt) {
-    return res.status(400).json({ error: 'channel, message and sendAt are required' });
+  // Basic validation
+  if (!channel || !message || !sendAt || !team_id) {
+    return res.status(400).json({
+      error: 'channel, message, sendAt, and team_id are required',
+    });
   }
 
-  // Parse your custom format to a Date object
+  // Parse sendAt using dayjs in "DD-MM-YYYY HH:mm" format
   const parsedDate = dayjs(sendAt, 'DD-MM-YYYY HH:mm');
 
   if (!parsedDate.isValid()) {
@@ -89,15 +93,17 @@ router.post('/schedule', async (req, res) => {
     const scheduledMessage = await MessageModel.create({
       channel,
       message,
-      send_at: parsedDate.toDate(), // Save as Date object
+      send_at: parsedDate.toDate(), // 🔁 Save as ISO date
+      team_id,
     });
 
     return res.json({ ok: true, scheduledMessage });
   } catch (err) {
-    console.error(err);
+    console.error('❌ Schedule Error:', (err as Error).message);
     return res.status(500).json({ error: 'Failed to schedule message' });
   }
 });
+
 
 
 router.get('/scheduled', async (req, res) => {

@@ -26,13 +26,14 @@ const sendScheduledMessages = async () => {
 
     if (messages.length === 0) return;
 
-    const tokenDoc = await TokenModel.findOne({});
-    if (!tokenDoc) {
-      console.error('❌ Slack token not found.');
-      return;
-    }
-
     for (const msg of messages) {
+      const tokenDoc = await TokenModel.findOne({ 'team.id': msg.team_id }); // ✅ Now inside loop
+
+      if (!tokenDoc) {
+        console.error(`❌ Slack token not found for team: ${msg.team_id}`);
+        continue; // Skip this message
+      }
+
       try {
         console.log(`📤 Sending message to ${msg.channel}: "${msg.message}"`);
 
@@ -57,8 +58,8 @@ const sendScheduledMessages = async () => {
       }
     }
   } catch (err) {
-  console.error('❌ Cron job error:', (err as Error).message);
-} finally {
+    console.error('❌ Cron job error:', (err as Error).message);
+  } finally {
     await mongoose.disconnect();
     console.log('🔌 MongoDB disconnected');
   }
