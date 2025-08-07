@@ -37,6 +37,8 @@ router.get('/callback', async (req, res) => {
     });
 
     const data = response.data;
+    console.log('Slack OAuth Response:', data);
+
 
     if (!data.ok) return res.status(400).json({ error: data.error });
 
@@ -52,7 +54,7 @@ router.get('/callback', async (req, res) => {
     await token.save();
 
     // return res.send('✅ Slack workspace connected successfully. You can now close this tab.');
-    return res.redirect('http://localhost:5173?connected=true');
+    return res.redirect(`http://localhost:5173?connected=true&team_id=${data.team.id}`);
   } catch (err) {
     console.error(err);
     return res.status(500).send('Slack OAuth failed');
