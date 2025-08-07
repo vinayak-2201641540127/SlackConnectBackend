@@ -54,7 +54,8 @@ router.get('/callback', async (req, res) => {
     await token.save();
 
     // return res.send('✅ Slack workspace connected successfully. You can now close this tab.');
-    return res.redirect(`http://localhost:5173?connected=true&team_id=${data.team.id}`);
+    return res.redirect(`http://slackconnectsagar.netlify.app?connected=true&team_id=${data.team.id}`);
+    // http://slackconnectsagar.netlify.app
   } catch (err) {
     console.error(err);
     return res.status(500).send('Slack OAuth failed');
