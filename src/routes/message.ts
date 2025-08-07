@@ -75,15 +75,13 @@ import dayjs from 'dayjs';
 router.post('/schedule', async (req, res) => {
   const { channel, message, sendAt, team_id } = req.body;
 
-  // Basic validation
   if (!channel || !message || !sendAt || !team_id) {
     return res.status(400).json({
       error: 'channel, message, sendAt, and team_id are required',
     });
   }
 
-  // Parse sendAt using dayjs in "DD-MM-YYYY HH:mm" format
-  const parsedDate = dayjs(sendAt, 'DD-MM-YYYY HH:mm');
+  const parsedDate = dayjs(sendAt); // ✅ ISO string parsing (from datetime-local)
 
   if (!parsedDate.isValid()) {
     return res.status(400).json({ error: 'Invalid sendAt format' });
@@ -93,9 +91,11 @@ router.post('/schedule', async (req, res) => {
     const scheduledMessage = await MessageModel.create({
       channel,
       message,
-      send_at: parsedDate.toDate(), // 🔁 Save as ISO date
+      send_at: parsedDate.toDate(), // ✅ Store as Date
       team_id,
     });
+
+    console.log('✅ Message scheduled:', scheduledMessage);
 
     return res.json({ ok: true, scheduledMessage });
   } catch (err) {
@@ -103,6 +103,7 @@ router.post('/schedule', async (req, res) => {
     return res.status(500).json({ error: 'Failed to schedule message' });
   }
 });
+
 
 
 
