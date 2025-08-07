@@ -21,10 +21,12 @@ const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, async () => {
   await connectDB();
+  
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 
-     cron.schedule('* * * * *', async () => {
+    cron.schedule('* * * * *', async () => {
     console.log('⏰ Checking for scheduled messages...');
+    console.log("Wait Sagar");
     await sendScheduledMessages();
   });
 

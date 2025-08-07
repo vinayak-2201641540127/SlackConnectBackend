@@ -5,7 +5,7 @@ import { TokenModel } from '../models/Token.js';
 
 export const sendScheduledMessages = async () => {
   const now = new Date();
-
+  console.log("Hii", now);
   const messages = await MessageModel.find({
     status: 'scheduled',
     send_at: { $lte: now }
@@ -21,7 +21,7 @@ export const sendScheduledMessages = async () => {
       console.error(`❌ Slack token not found for team: ${msg.team_id}`);
       continue;
     }
-
+    console.log(tokenDoc);
     try {
       const res = await axios.post('https://slack.com/api/chat.postMessage', {
         channel: msg.channel,
